@@ -184,7 +184,6 @@ WARN [AdminClient clientId=adminclient-1] Connection to node -1 (localhost/127.0
 
 ```python
 from kafka import KafkaConsumer, KafkaProducer
-import json
 
 def kafka_check():
    """ Проверка соединения """
