@@ -1,0 +1,98 @@
+# запуск всех кластеров docker-compose up
+# либо docker-compose up -d kafka1 kafka2 для нескольких кластеров
+
+version: '3.3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest # если что-то сломается можно заменить на 6.9.1 (на кафках ниже тоже)
+    ports:
+    - "2181:2181"
+    - "2888:2888"
+    - "3888:3888"
+    healthcheck:
+      test: echo stat | nc localhost 2181
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    environment:
+    - ZOOKEEPER_SERVER_ID=1
+    - ZOOKEEPER_CLIENT_PORT=2181
+    - ZOOKEEPER_TICK_TIME=2000
+    - ZOOKEEPER_INIT_LIMIT=5
+    - ZOOKEEPER_SYNC_LIMIT=2
+    - ZOOKEEPER_SERVERS=zookeeper:2888:3888
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+    - zookeeper
+    ports:
+    - "8091:8091"
+    environment:
+    - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9091,OUTSIDE://0.0.0.0:8091
+    - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka1:9091,OUTSIDE://localhost:8091
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_BROKER_ID=1
+    - BOOTSTRAP_SERVERS=kafka1:9091,kafka2:9092,kafka3:9093,kafka4:9094,kafka5:9095
+    - ZOOKEEPER=zookeeper:2181
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+    - zookeeper
+    ports:
+    - "8092:8092"
+    environment:
+    - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:8092
+    - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka2:9092,OUTSIDE://localhost:8092
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_BROKER_ID=2
+    - BOOTSTRAP_SERVERS=kafka1:9091,kafka2:9092,kafka3:9093,kafka4:9094,kafka5:9095
+    - ZOOKEEPER=zookeeper:2181
+  kafka3:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+    - zookeeper
+    ports:
+    - "8093:8093"
+    environment:
+    - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9093,OUTSIDE://0.0.0.0:8093
+    - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka3:9093,OUTSIDE://localhost:8093
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_BROKER_ID=3
+    - BOOTSTRAP_SERVERS=kafka1:9091,kafka2:9092,kafka3:9093,kafka4:9094,kafka5:9095
+    - ZOOKEEPER=zookeeper:2181
+  kafka4:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+    - zookeeper
+    ports:
+    - "8094:8094"
+    environment:
+    - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9094,OUTSIDE://0.0.0.0:8094
+    - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka4:9094,OUTSIDE://localhost:8094
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_BROKER_ID=4
+    - BOOTSTRAP_SERVERS=kafka1:9091,kafka2:9092,kafka3:9093,kafka4:9094,kafka5:9095
+    - ZOOKEEPER=zookeeper:2181
+  kafka5:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+    - zookeeper
+    ports:
+    - "8095:8095"
+    environment:
+    - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9095,OUTSIDE://0.0.0.0:8095
+    - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka5:9095,OUTSIDE://localhost:8095
+    - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+    - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    - KAFKA_BROKER_ID=5
+    - BOOTSTRAP_SERVERS=kafka1:9091,kafka2:9092,kafka3:9093,kafka4:9094,kafka5:9095
+    - ZOOKEEPER=zookeeper:2181
