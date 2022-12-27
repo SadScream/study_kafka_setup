@@ -11,7 +11,6 @@ def kafka_check(port: int):
    consumer = KafkaConsumer(bootstrap_servers=f"localhost:{port}",
                             auto_offset_reset="earliest", consumer_timeout_ms=5000)
    print("topics: ", consumer.topics())
-   print(consumer.topics())
 
    if consumer is None:
       print("Что то пошло не так..")
